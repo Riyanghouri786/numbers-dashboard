@@ -1,103 +1,144 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
+import { motion } from 'framer-motion';
+
+export default function DashboardPage() {
+  const [numbers, setNumbers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchNumbers = async () => {
+      try {
+        const res = await fetch('/api/numbers');
+        const data = await res.json();
+        setNumbers(data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching numbers:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchNumbers();
+  }, []);
+
+  const total = numbers.length;
+  const lastNumber = total > 0 ? numbers[0].number : '-';
+  const lastDate =
+    total > 0 ? new Date(numbers[0].createdAt).toLocaleString() : '-';
+
+  const copyAll = () => {
+  const allNumbers = numbers.map((n) => `+${n.number}`).join(', ');
+  navigator.clipboard.writeText(allNumbers);
+  toast.success('✅ All numbers copied');
+};
+
+
+  const copySingle = (number) => {
+    navigator.clipboard.writeText(number);
+    toast.success(`Copied: ${number}`);
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-white p-6">
+      <motion.h1
+        className="text-4xl font-extrabold text-center text-gray-800 mb-10"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        📊 WhatsApp Checker Dashboard
+      </motion.h1>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+      {/* Stat Cards */}
+      <motion.div
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+      >
+        <Card title="Total Numbers" value={total} color="text-green-600" icon="📱" />
+        <Card title="Last Added Number" value={lastNumber} color="text-blue-600" icon="📞" />
+        <Card title="Last Saved Date" value={lastDate} color="text-purple-600" icon="🕒" />
+      </motion.div>
+
+      {/* Copy All Button */}
+      <motion.div
+        className="mb-4 text-right"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.4 }}
+      >
+        <button
+          onClick={copyAll}
+          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          📋 Copy All Numbers
+        </button>
+      </motion.div>
+
+      {/* Data Table */}
+      <motion.div
+        className="bg-white rounded-xl shadow overflow-x-auto border border-gray-200"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+      >
+        {loading ? (
+          <p className="text-center py-10 text-gray-500">Loading...</p>
+        ) : numbers.length === 0 ? (
+          <p className="text-center py-10 text-gray-500">No numbers found.</p>
+        ) : (
+          <table className="min-w-full text-sm text-gray-700">
+            <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
+              <tr>
+                <th className="py-3 px-4 text-left">#</th>
+                <th className="py-3 px-4 text-left">Phone Number</th>
+                <th className="py-3 px-4 text-left">Date Saved</th>
+                <th className="py-3 px-4 text-left">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {numbers.map((item, index) => (
+                <tr key={item._id} className="border-t hover:bg-gray-50 transition">
+                  <td className="py-2 px-4">{index + 1}</td>
+                  <td className="py-2 px-4 font-mono text-green-700">{item.number}</td>
+                  <td className="py-2 px-4 text-gray-500">
+                    {new Date(item.createdAt).toLocaleString()}
+                  </td>
+                  <td className="py-2 px-4">
+                    <button
+                      onClick={() => copySingle(item.number)}
+                      className="text-sm bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition"
+                    >
+                      Copy
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </motion.div>
     </div>
+  );
+}
+
+function Card({ title, value, color, icon }) {
+  return (
+    <motion.div
+      className="bg-white rounded-2xl shadow-md border border-gray-200 p-6 hover:shadow-lg transition"
+      whileHover={{ scale: 1.02 }}
+    >
+      <div className="flex items-center gap-4">
+        <div className="text-4xl">{icon}</div>
+        <div>
+          <p className="text-sm text-gray-500">{title}</p>
+          <h2 className={`text-2xl font-bold ${color}`}>{value}</h2>
+        </div>
+      </div>
+    </motion.div>
   );
 }
