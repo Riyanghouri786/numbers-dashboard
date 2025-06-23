@@ -17,4 +17,4 @@ const numberSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.models.Number || mongoose.model('Number', numberSchema);
+export default mongoose.models.Number || mongoose.model('Number_2', numberSchema);
