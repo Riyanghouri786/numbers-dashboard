@@ -1,9 +1,9 @@
-import connect from '../../../../lib/db.js';
-import Number from '../../../../models/Number.js';
+import connect from "../../../../lib/db.js";
+import Send from "../../../../models/Send.js"; // Import the Number model
 
 export async function GET() {
   await connect();
-  const numbers = await Number.find().sort({ createdAt: -1 });
+  const numbers = await Send.find().sort({ createdAt: -1 });
   return Response.json(numbers);
 }
 
@@ -11,6 +11,7 @@ export async function POST(req) {
   try {
     await connect();
     const body = await req.json();
+
     const { number } = body;
 
     if (!number) {
@@ -19,13 +20,13 @@ export async function POST(req) {
       });
     }
 
-    const newNumber = await Number.create({ number, status:"valid" });
+    const newNumber = await Send.create({ number, status: "Send" });
 
     return new Response(JSON.stringify(newNumber), {
       status: 201,
     });
   } catch (err) {
-    console.error("POST /api/numbers error:", err);
+    console.error("POST /api/send error:", err);
     return new Response(JSON.stringify({ error: 'Failed to add number' }), {
       status: 500,
     });
@@ -44,7 +45,7 @@ export async function DELETE(req) {
       });
     }
 
-    const deleted = await Number.findOneAndDelete({ number });
+    const deleted = await Send.findOneAndDelete({ number });
 
     if (!deleted) {
       return new Response(JSON.stringify({ error: 'Number not found' }), {
@@ -56,7 +57,7 @@ export async function DELETE(req) {
       status: 200,
     });
   } catch (err) {
-    console.error("DELETE /api/numbers error:", err);
+    console.error("DELETE /api/send error:", err);
     return new Response(JSON.stringify({ error: 'Failed to delete number' }), {
       status: 500,
     });

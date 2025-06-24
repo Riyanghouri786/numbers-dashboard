@@ -10,11 +10,11 @@ const numberSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["valid"],
+      enum: ["Send"],
       required: true,
     },
   },
   { timestamps: true }
 );
 
-export default mongoose.models.Number_2 || mongoose.model('Number_2', numberSchema);
+export default mongoose.models.Send || mongoose.model('Send', numberSchema);
