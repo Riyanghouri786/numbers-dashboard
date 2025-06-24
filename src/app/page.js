@@ -18,7 +18,7 @@ const Page = () => {
       <p>If you have any questions, feel free to reach out.</p>
       <p>Stay tuned for more updates!</p>
       <p>Check out our latest features!</p>
-      <p>Don't forget to subscribe to our newsletter!</p>
+      <p>Dont forget to subscribe to our newsletter!</p>
       <p>Follow us on social media for more content!</p>  
     </div>
   )
